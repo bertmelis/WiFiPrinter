@@ -1,0 +1,29 @@
+{
+  "name": "WiFiPrinter",
+  "version": "0.0.1",
+  "keywords": "iot, home, webserver, debug, print, esp8266, async",
+  "description": "Wireless alternative for Serial",
+  "homepage": "http://www.github.com/bertmelis/WiFiPrinter",
+  "license": "MIT",
+  "authors":
+  {
+    "name": "Bert Melis",
+    "url": "https://www.github.com/bertmelis",
+    "maintainer": true
+  },
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/bertmelis/WiFiPrinter.git",
+    "branch": "master"
+  },
+  "frameworks": "arduino",
+  "platforms": [
+    "espressif8266"
+  ],
+  "dependencies": [
+    {
+      "name": "ESPAsyncTCP"
+    }
+  ]
+}
