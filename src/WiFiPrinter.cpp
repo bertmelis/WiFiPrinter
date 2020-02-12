@@ -59,7 +59,6 @@ size_t WiFiPrinter::write(const uint8_t *buffer, size_t size) {
 }
 
 void WiFiPrinter::_onClientConnect(void* arg, AsyncClient* client) {
-  Serial.print("new client\n");
   WiFiPrinter* i = reinterpret_cast<WiFiPrinter*>(arg);
   if (i->_client) {
     i->_client->close(true);
@@ -69,7 +68,6 @@ void WiFiPrinter::_onClientConnect(void* arg, AsyncClient* client) {
 }
 
 void WiFiPrinter::_onClientDisconnect(void* arg, AsyncClient* client) {
-  Serial.print("client disconnected\n");
   WiFiPrinter* i = reinterpret_cast<WiFiPrinter*>(arg);
   if (i->_client) i->_client = nullptr;
 }
