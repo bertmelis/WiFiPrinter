@@ -25,6 +25,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+#include <Print.h>  // from Arduino core
 #include <ESPAsyncTCP.h>
 
 class WiFiPrinter : public Print {
