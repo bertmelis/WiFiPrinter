@@ -25,24 +25,33 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include <Print.h>  // from Arduino core
-#include <ESPAsyncTCP.h>
+#include <Arduino.h>
+
+#include <Print.h>
+#include <WiFiClient.h>
+#include <WiFiServer.h>
 
 class WiFiPrinter : public Print {
  public:
-  explicit WiFiPrinter(uint16_t port);
+  explicit WiFiPrinter(uint16_t port = 23);
   ~WiFiPrinter();
 
   void begin();
   void end();
 
   size_t write(uint8_t byte);
-  size_t write(const uint8_t *buffer, size_t size);
+  size_t write(const uint8_t* buffer, size_t size);
 
- private:
-  static void _onClientConnect(void* arg, AsyncClient* client);
-  static void _onClientDisconnect(void* arg, AsyncClient* client);
-  uint16_t _port;
-  AsyncServer* _server;
-  AsyncClient* _client;
+  typedef std::function<void(void)> onClientConnectCb;
+  void onClientConnect(onClientConnectCb cb);
+  typedef std::function<void(const uint8_t* data, size_t len)> onClientDataCb;
+  void onClientData(onClientDataCb cb);
+
+  void handle();
+
+ protected:
+  WiFiServer _server;
+  WiFiClient _client;
+  onClientConnectCb _onClientConnectCb;
+  onClientDataCb _onClientDataCb;
 };

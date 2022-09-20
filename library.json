@@ -1,8 +1,8 @@
 {
   "name": "WiFiPrinter",
-  "version": "0.0.1",
-  "keywords": "iot, home, webserver, debug, print, esp8266, async",
-  "description": "Wireless alternative for Serial",
+  "version": "0.0.2",
+  "keywords": "iot, home, webserver, debug, print, esp8266",
+  "description": "Wireless alternative for Serial debugging",
   "homepage": "http://www.github.com/bertmelis/WiFiPrinter",
   "license": "MIT",
   "authors":
@@ -19,11 +19,7 @@
   },
   "frameworks": "arduino",
   "platforms": [
-    "espressif8266"
-  ],
-  "dependencies": [
-    {
-      "name": "ESPAsyncTCP"
-    }
+    "espressif8266",
+    "espressif32"
   ]
 }

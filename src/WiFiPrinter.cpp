@@ -25,49 +25,63 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <WiFiPrinter.h>
 
-WiFiPrinter::WiFiPrinter(uint16_t port) :
-  _port(port),
-  _server(nullptr),
-  _client(nullptr) {}
+WiFiPrinter::WiFiPrinter(uint16_t port)
+: _server(port, 1)
+, _client()
+, _onClientConnectCb(nullptr)
+, _onClientDataCb(nullptr) {
+  // empty
+}
 
 WiFiPrinter::~WiFiPrinter() {
-  if (_client) _client->close(true);
+  if (_client) _client.stop();
 }
 
 void WiFiPrinter::begin() {
-  _server = new AsyncServer(_port);
-  _server->onClient(_onClientConnect, this);
-  _server->begin();
+  _server.begin();
 }
 
 void WiFiPrinter::end() {
-  delete _server;  // will also close connections
+  _client.stop();
+  _server.stop();
 }
 
 size_t WiFiPrinter::write(uint8_t byte) {
   return write(&byte, 1);
 }
 
-size_t WiFiPrinter::write(const uint8_t *buffer, size_t size) {
-  if (_client) {
-    if (_client->canSend() && _client->space() > size) {
-      _client->write(reinterpret_cast<const char*>(buffer), size);
-      return size;
-    }
+size_t WiFiPrinter::write(const uint8_t* buffer, size_t size) {
+  if (_client.connected()) {
+    return _client.write(reinterpret_cast<const char*>(buffer), size);
   }
   return 0;
 }
 
-void WiFiPrinter::_onClientConnect(void* arg, AsyncClient* client) {
-  WiFiPrinter* i = reinterpret_cast<WiFiPrinter*>(arg);
-  if (i->_client) {
-    i->_client->close(true);
-  }
-  i->_client = client;
-  i->_client->onDisconnect(_onClientDisconnect, i);
+void WiFiPrinter::onClientConnect(onClientConnectCb cb) {
+  _onClientConnectCb = cb;
 }
 
-void WiFiPrinter::_onClientDisconnect(void* arg, AsyncClient* client) {
-  WiFiPrinter* i = reinterpret_cast<WiFiPrinter*>(arg);
-  if (i->_client) i->_client = nullptr;
+void WiFiPrinter::onClientData(onClientDataCb cb) {
+  _onClientDataCb = cb;
+}
+
+void WiFiPrinter::handle() {
+  if (_server.hasClient()) {
+    if (_client) {
+      Serial.print("stopping existing client\n");
+      _client.stop();
+    }
+    Serial.print("accepting client\n");
+    //_client = _server.accept();
+    _client = _server.available();
+    if (_onClientConnectCb) _onClientConnectCb();
+  }
+  if (_client.connected() && _client.available() && _onClientDataCb) {
+    size_t len = _client.available();
+    uint8_t* data = reinterpret_cast<uint8_t*>(malloc(len + 1));
+    _client.read(data, len);
+    data[len] = '\0';
+    _onClientDataCb(data, len);
+    free(data);
+  }
 }
