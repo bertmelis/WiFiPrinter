@@ -73,7 +73,7 @@ void WiFiPrinter::handle() {
     }
     Serial.print("accepting client\n");
     //_client = _server.accept();
-    _client = _server.available();
+    _client = _server.accept();
     if (_onClientConnectCb) _onClientConnectCb();
   }
   if (_client.connected() && _client.available() && _onClientDataCb) {
