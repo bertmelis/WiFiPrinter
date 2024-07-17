@@ -31,10 +31,14 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <WiFiClient.h>
 #include <WiFiServer.h>
 
-class WiFiPrinter : public Print {
+#ifndef WIFIPRINTER_PORT
+#define WIFIPRINTER_PORT 23
+#endif
+
+class WiFiPrinterClass : public Print {
  public:
-  explicit WiFiPrinter(uint16_t port = 23);
-  ~WiFiPrinter();
+  explicit WiFiPrinterClass(uint16_t port = 23);
+  ~WiFiPrinterClass();
 
   void begin();
   void end();
@@ -55,3 +59,5 @@ class WiFiPrinter : public Print {
   onClientConnectCb _onClientConnectCb;
   onClientDataCb _onClientDataCb;
 };
+
+extern WiFiPrinterClass WiFiPrinter;

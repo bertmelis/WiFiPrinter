@@ -5,9 +5,6 @@
 const char* ssid = "........";
 const char* password = "........";
 
-WiFiPrinter debug;
-
-
 void setup() {
   Serial.begin(74880);
   delay(5000);
@@ -17,7 +14,7 @@ void setup() {
     delay(100);
   }
 
-  debug.begin();
+  WiFiPrinter.begin();
 
   Serial.print("Ready for connections on ");
   Serial.print(WiFi.localIP());
@@ -29,7 +26,7 @@ void loop() {
   if (millis() - lastMillis > 60 * 1000UL) {
     lastMillis = millis();
     Serial.printf("%lu- current free heap: %lu\n", lastMillis, ESP.getFreeHeap());
-    debug.printf("%lu- current free heap: %lu\n", lastMillis, ESP.getFreeHeap());
+    WiFiPrinter.printf("%lu- current free heap: %lu\n", lastMillis, ESP.getFreeHeap());
   }
-  debug.handle();
+  WiFiPrinter.handle();
 }

@@ -25,7 +25,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <WiFiPrinter.h>
 
-WiFiPrinter::WiFiPrinter(uint16_t port)
+WiFiPrinterClass::WiFiPrinterClass(uint16_t port)
 : _server(port, 1)
 , _client()
 , _onClientConnectCb(nullptr)
@@ -33,46 +33,45 @@ WiFiPrinter::WiFiPrinter(uint16_t port)
   // empty
 }
 
-WiFiPrinter::~WiFiPrinter() {
+WiFiPrinterClass::~WiFiPrinterClass() {
   if (_client) _client.stop();
 }
 
-void WiFiPrinter::begin() {
+void WiFiPrinterClass::begin() {
   _server.begin();
 }
 
-void WiFiPrinter::end() {
+void WiFiPrinterClass::end() {
   _client.stop();
   _server.stop();
 }
 
-size_t WiFiPrinter::write(uint8_t byte) {
+size_t WiFiPrinterClass::write(uint8_t byte) {
   return write(&byte, 1);
 }
 
-size_t WiFiPrinter::write(const uint8_t* buffer, size_t size) {
+size_t WiFiPrinterClass::write(const uint8_t* buffer, size_t size) {
   if (_client.connected()) {
     return _client.write(reinterpret_cast<const char*>(buffer), size);
   }
   return 0;
 }
 
-void WiFiPrinter::onClientConnect(onClientConnectCb cb) {
+void WiFiPrinterClass::onClientConnect(onClientConnectCb cb) {
   _onClientConnectCb = cb;
 }
 
-void WiFiPrinter::onClientData(onClientDataCb cb) {
+void WiFiPrinterClass::onClientData(onClientDataCb cb) {
   _onClientDataCb = cb;
 }
 
-void WiFiPrinter::handle() {
+void WiFiPrinterClass::handle() {
   if (_server.hasClient()) {
     if (_client) {
       Serial.print("stopping existing client\n");
       _client.stop();
     }
     Serial.print("accepting client\n");
-    //_client = _server.accept();
     _client = _server.accept();
     if (_onClientConnectCb) _onClientConnectCb();
   }
@@ -85,3 +84,5 @@ void WiFiPrinter::handle() {
     free(data);
   }
 }
+
+WiFiPrinterClass WiFiPrinter(WIFIPRINTER_PORT);
